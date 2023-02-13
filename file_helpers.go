@@ -8,21 +8,39 @@ import (
 
 func CreateTempFile(t testing.TB, prefix string) *os.File {
 	t.Helper()
-	tempDir := t.TempDir()
-	f, err := os.CreateTemp(tempDir, prefix)
+	f, err := CreateTempFileBase(prefix)
 	Require_NoError(t, err)
 	return f
 }
 
+func CreateTempFileBase(prefix string) (*os.File, error) {
+	f, err := os.CreateTemp(os.TempDir(), prefix)
+	if err != nil {
+		return nil, err
+	}
+	return f, nil
+}
+
 func CreateConfFile(t testing.TB, content []byte) string {
 	t.Helper()
-	conf := CreateTempFile(t, _EMPTY_)
-	fName := conf.Name()
-	conf.Close()
-	if err := os.WriteFile(fName, content, 0666); err != nil {
+	fName, err := CreateConfFileBase(content)
+	if err != nil {
 		t.Fatalf("Error writing conf file: %v", err)
 	}
 	return fName
+}
+
+func CreateConfFileBase(content []byte) (string, error) {
+	conf, err := CreateTempFileBase(_EMPTY_)
+	if err != nil {
+		return _EMPTY_, err
+	}
+	fName := conf.Name()
+	conf.Close()
+	if err := os.WriteFile(fName, content, 0666); err != nil {
+		return _EMPTY_, err
+	}
+	return fName, nil
 }
 
 func RemoveContents(dir string) error {
