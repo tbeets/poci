@@ -81,6 +81,10 @@ func Require_Len(t *testing.T, a, b int) {
 	}
 }
 
+func CheckForErr(totalWait, sleepDur time.Duration, f func() error) error {
+	return checkForErr(totalWait, sleepDur, f)
+}
+
 func checkForErr(totalWait, sleepDur time.Duration, f func() error) error {
 	timeout := time.Now().Add(totalWait)
 	var err error
