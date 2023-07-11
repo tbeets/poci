@@ -7,28 +7,28 @@ import (
 	"time"
 )
 
-func Require_True(t *testing.T, b bool) {
+func RequireTrue(t *testing.T, b bool) {
 	t.Helper()
 	if !b {
 		t.Fatalf("require true, but got false")
 	}
 }
 
-func Require_False(t *testing.T, b bool) {
+func RequireFalse(t *testing.T, b bool) {
 	t.Helper()
 	if b {
 		t.Fatalf("require false, but got true")
 	}
 }
 
-func Require_NoError(t testing.TB, err error) {
+func RequireNoError(t *testing.T, err error) {
 	t.Helper()
 	if err != nil {
 		t.Fatalf("require no error, but got: %v", err)
 	}
 }
 
-func Require_Contains(t *testing.T, s string, subStrs ...string) {
+func RequireContains(t *testing.T, s string, subStrs ...string) {
 	t.Helper()
 	for _, subStr := range subStrs {
 		if !strings.Contains(s, subStr) {
@@ -37,7 +37,7 @@ func Require_Contains(t *testing.T, s string, subStrs ...string) {
 	}
 }
 
-func Require_Error(t *testing.T, err error, expected ...error) {
+func RequireError(t *testing.T, err error, expected ...error) {
 	t.Helper()
 	if err == nil {
 		t.Fatalf("require error, but got none")
@@ -60,21 +60,21 @@ func Require_Error(t *testing.T, err error, expected ...error) {
 	t.Fatalf("Expected one of %v, got '%v'", expected, err)
 }
 
-func Require_Equal(t *testing.T, a, b string) {
+func RequireEqual(t *testing.T, a, b string) {
 	t.Helper()
 	if strings.Compare(a, b) != 0 {
 		t.Fatalf("require equal, but got: %v != %v", a, b)
 	}
 }
 
-func Require_NotEqual(t *testing.T, a, b [32]byte) {
+func RequireNotEqual(t *testing.T, a, b [32]byte) {
 	t.Helper()
 	if bytes.Equal(a[:], b[:]) {
 		t.Fatalf("require not equal, but got: %v != %v", a, b)
 	}
 }
 
-func Require_Len(t *testing.T, a, b int) {
+func RequireLen(t *testing.T, a, b int) {
 	t.Helper()
 	if a != b {
 		t.Fatalf("require len, but got: %v != %v", a, b)
@@ -98,10 +98,23 @@ func checkForErr(totalWait, sleepDur time.Duration, f func() error) error {
 	return err
 }
 
-func CheckFor(t testing.TB, totalWait, sleepDur time.Duration, f func() error) {
+func CheckFor(t *testing.T, totalWait, sleepDur time.Duration, f func() error) {
 	t.Helper()
 	err := checkForErr(totalWait, sleepDur, f)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
 }
+
+var (
+	_ = RequireTrue
+	_ = RequireFalse
+	_ = RequireNoError
+	_ = RequireContains
+	_ = RequireError
+	_ = RequireEqual
+	_ = RequireNotEqual
+	_ = RequireLen
+	_ = CheckForErr
+	_ = CheckFor
+)

@@ -6,10 +6,10 @@ import (
 	"testing"
 )
 
-func CreateTempFile(t testing.TB, prefix string) *os.File {
+func CreateTempFile(t *testing.T, prefix string) *os.File {
 	t.Helper()
 	f, err := CreateTempFileBase(prefix)
-	Require_NoError(t, err)
+	RequireNoError(t, err)
 	return f
 }
 
@@ -21,7 +21,7 @@ func CreateTempFileBase(prefix string) (*os.File, error) {
 	return f, nil
 }
 
-func CreateConfFile(t testing.TB, content []byte) string {
+func CreateConfFile(t *testing.T, content []byte) string {
 	t.Helper()
 	fName, err := CreateConfFileBase(content)
 	if err != nil {
@@ -36,7 +36,7 @@ func CreateConfFileBase(content []byte) (string, error) {
 		return _EMPTY_, err
 	}
 	fName := conf.Name()
-	conf.Close()
+	_ = conf.Close()
 	if err := os.WriteFile(fName, content, 0666); err != nil {
 		return _EMPTY_, err
 	}
@@ -48,7 +48,9 @@ func RemoveContents(dir string) error {
 	if err != nil {
 		return err
 	}
-	defer d.Close()
+	defer func(d *os.File) {
+		_ = d.Close()
+	}(d)
 	names, err := d.Readdirnames(-1)
 	if err != nil {
 		return err
@@ -61,3 +63,9 @@ func RemoveContents(dir string) error {
 	}
 	return nil
 }
+
+var (
+	_ = CreateTempFile
+	_ = CreateConfFile
+	_ = RemoveContents
+)
