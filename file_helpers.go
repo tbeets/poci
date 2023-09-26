@@ -2,7 +2,6 @@ package poci
 
 import (
 	"os"
-	"path/filepath"
 	"testing"
 )
 
@@ -44,24 +43,7 @@ func CreateConfFileBase(content []byte) (string, error) {
 }
 
 func RemoveContents(dir string) error {
-	d, err := os.Open(dir)
-	if err != nil {
-		return err
-	}
-	defer func(d *os.File) {
-		_ = d.Close()
-	}(d)
-	names, err := d.Readdirnames(-1)
-	if err != nil {
-		return err
-	}
-	for _, name := range names {
-		err = os.RemoveAll(filepath.Join(dir, name))
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+	return os.RemoveAll(dir)
 }
 
 var (
